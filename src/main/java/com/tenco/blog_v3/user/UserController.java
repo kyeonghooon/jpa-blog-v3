@@ -1,8 +1,10 @@
 package com.tenco.blog_v3.user;
 
+import com.tenco.blog_v3.common.utils.ApiUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +25,7 @@ public class UserController {
      * @return 메인 페이지
      */
     @PutMapping("/api/user/{id}")
-    public String update(@RequestBody UserDTO.UpdateDTO updateDTO) {
+    public String update(@RequestBody UserRequest.UpdateDTO updateDTO) {
 //        User sessionUser = (User) session.getAttribute("sessionUser");
 //        if (sessionUser == null) {
 //            return "redirect:/login-form";
@@ -38,15 +40,13 @@ public class UserController {
      * 회원 가입 기능 요청
      * @return
      */
+    // @ResponseBody
     @PostMapping("/join")
-    public String join()  {
-//        // 유효성 검사 생략 ...
-//        try {
-//            userService.signUp(reqDto);
-//        } catch (DataIntegrityViolationException e) {
-//            throw new Exception500("동일한 유저네임이 존재 합니다.");
-//        }
-        return "redirect:/login-form";
+    public ResponseEntity<ApiUtil<UserResponse.DTO>> join(@RequestBody UserRequest.JoinDTO reqDTO)  {
+        System.out.println(reqDTO);
+        // 회원가입 서비스는 --> 서비스 객체에게 위임한다.
+        UserResponse.DTO dto = userService.signUp(reqDTO);
+        return ResponseEntity.ok(new ApiUtil<>(dto));
     }
 
     /**
